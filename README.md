@@ -1,7 +1,7 @@
 # Finalproject
-Our goal is to compare stool samples of healthy patients and breast cancer patients. Here, we can quantify the differences in bacteria present, potenitally identifying differencies in quantity and species.
+Our goal is to compare gut samples of healthy patients and breast cancer patients. Here, we can quantify the differences in bacteria present, potenitally identifying differencies in quantity and species.
 
-Also, we can look at stool samples from cancer patietns and compare that to the bacteria found in their gut microbiota. 
+Also, we can look at tissue samples from cancer patietns and compare that to the bacteria found in their gut microbiota. 
 
 All of our data should be paired and amplicon. 
 
