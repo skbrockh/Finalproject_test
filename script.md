@@ -1,9 +1,7 @@
 # Final Project
 # Analyzing the Gut Microbiome in Breast Cancer Patients and Healthy Patients
 
----
-
-# Step 1: Download SRR Data
+## Step 1: Download SRR Data
 ### Dataset: 16S rRNA sequence data found in human stool and tissue.
 1. Download FASTQ files of paired-end reads
    - Create a file named `download_sra.sh`
