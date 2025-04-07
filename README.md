@@ -147,8 +147,10 @@ mkdir reads_qza
 module load anaconda3        
 conda activate qiime2-amplicon-2024.2
 ```
-- When you are finished with this step make sure you deactivate the environment using `conda deactivate`
-
+3. Compress fastq files --> we needed to do this becasue QUIIME2 would not accept them when unzipped
+```
+gzip SRR*
+```
 4. Feed qiime the raw reads
 ```         
 qiime tools import \
@@ -159,12 +161,7 @@ qiime tools import \
 ```
 - cassava format, files follow a pattern `SampleID_L001_R1_001.fastq.gz`
 ---
-5. Compress fastq files
-```
-gzip SRR*
-```
-
-7. remove primer sequences from reads, these are the primers used to enrich for a specific locus, e.g.:16S, COI, etc
+5. remove primer sequences from reads, these are the primers used to enrich for a specific locus, e.g.:16S, COI, etc
 ```
 qiime cutadapt trim-paired \
   --i-demultiplexed-sequences reads_qza/reads.qza \
