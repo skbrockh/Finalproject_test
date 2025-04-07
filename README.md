@@ -187,7 +187,7 @@ git push origin main
 ---
 
 ## **Step 4: Denoising with DADA2**
-# This is importnat to filter out low-quality sequences, chimeras, and artifacts. This allows for more accurate data and downstream analysis reliability.
+#### This is importnat to filter out low-quality sequences, chimeras, and artifacts. This allows for more accurate data and downstream analysis reliability.
 1. Ask for some computer resources
 ```
 salloc --mem=100G --time=2:00:00 --cpus-per-task=16 
