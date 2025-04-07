@@ -142,16 +142,16 @@ done < tissue_accessions.txt
 ```         
 mkdir reads_qza
 ```
----
+3. Now we will create the environment
 ```
 module load anaconda3        
 conda activate qiime2-amplicon-2024.2
 ```
-3. Compress fastq files --> we needed to do this becasue QUIIME2 would not accept them when unzipped
+4. Compress fastq files --> we needed to do this becasue QUIIME2 would not accept them when unzipped
 ```
 gzip SRR*
 ```
-4. Feed qiime the raw reads
+5. Feed qiime the raw reads
 ```         
 qiime tools import \
   --type SampleData[PairedEndSequencesWithQuality] \
@@ -161,7 +161,7 @@ qiime tools import \
 ```
 - cassava format, files follow a pattern `SampleID_L001_R1_001.fastq.gz`
 ---
-5. remove primer sequences from reads, these are the primers used to enrich for a specific locus, e.g.:16S, COI, etc
+6. remove primer sequences from reads, these are the primers used to enrich for a specific locus, e.g.:16S, COI, etc
 ```
 qiime cutadapt trim-paired \
   --i-demultiplexed-sequences reads_qza/reads.qza \
@@ -172,7 +172,7 @@ qiime cutadapt trim-paired \
   --p-no-indels \
   --o-trimmed-sequences reads_qza/reads_trimmed.qza
 ```
-6. Visualize your data now
+7. Visualize your data now
 ```         
 qiime demux summarize \
   --i-data reads_qza/reads_trimmed.qza \
