@@ -3,13 +3,59 @@
 ---
 Our goal is to compare gut samples of healthy patients and breast cancer patients. Here, we can quantify the differences in bacteria present, potenitally identifying differencies in quantity and species.
 
-Also, we can look at tissue samples from cancer patietns and compare that to the bacteria found in their gut microbiota. 
+We were planning on looking at microbiota from breast cancer tissue samples as well, but we were unable to do that becuase the samples were single and not paired. Due to this, we will just be looking at the gut microbiota data. 
 
 All of our data should be paired and amplicon. 
 
 For this project we will be using:
 
 QUIIME2 --> to quantify the amount of bacteria present in each sample. This is available in the HPC.
+
+---
+## **Step 1: Downloading the data**
+1. Close the repositroy to get the accession_list.txt file
+'''
+git clone repositorylink
+'''
+2. Create a new directory for the project and move the accession-list.txt file into the directory
+'''
+mkdir -p microbiome_project/fasta
+mv accession_list.txt microbiome_project/
+'''
+3. Go into the new directory and check if the file is there
+
+'''
+cd microbiome_project
+ls
+'''
+4. Now we will need to download the FASTQ files from SRA. To do this we will need to create a file and save the script and run bash.
+
+'''
+vi prep_data.sh
+'''
+'''
+#!/bin/bash
+
+# Create folders & clear any previous versions
+mkdir -p fastq
+echo "sample-id,absolute-filepath,direction" > manifest.csv
+echo -e "sample-id\tPatientStatus" > metadata.tsv
+
+# Loop over your accession list
+while read line; do
+    accession=$(echo $line | cut -f1 -d' ')
+    status=$(echo $line | cut -f2 -d' ')
+
+    echo "Downloading $accession..."
+    fastq-dump --split-files $accession --outdir fastq
+
+    filepath=$(realpath fastq/${accession}_1.fastq)  # single-end assumed
+    echo "$accession,$filepath,forward" >> manifest.csv
+    echo -e "$accession\t$status" >> metadata.tsv
+done < accession_list.txt
+'''
+
+
 ---
 ## **Step 2: Data Quality Control**
 
