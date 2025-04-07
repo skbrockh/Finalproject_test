@@ -160,7 +160,6 @@ qiime tools import \
   --input-format CasavaOneEightSingleLanePerSampleDirFmt
 ```
 - cassava format, files follow a pattern `SampleID_L001_R1_001.fastq.gz`
----
 6. remove primer sequences from reads, these are the primers used to enrich for a specific locus, e.g.:16S, COI, etc
 ```
 qiime cutadapt trim-paired \
