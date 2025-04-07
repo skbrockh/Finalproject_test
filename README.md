@@ -68,9 +68,162 @@ done
 ```
 bash rename.sh
 ```
+#### OOPS some sequences are missing
+- Download missing sequences.
+```
+vi tissue_accessions
+```
+- Copy and paste missing accessions
+```
+vi download_sra.sh
+```
+```
+#!/bin/bash
+# Use prefetch to download all files
+module load sra-toolkit
+while read -r SRR; do
+   echo "Downloading $SRR..."
+   prefetch --max-size 100G $SRR 
+   fastq-dump --gzip $SRR --split-files -O fastq_files/
+done < srr_accessions.txt
+```
+
 2. Let's create the following directory
 ```         
 mkdir reads_qza
 ```
 ---
+```
+module load anaconda3        
+conda activate qiime2-amplicon-2024.2
+```
+- When you are finished with this tutorial make sure you deactivate the environment using `conda deactivate`
 
+4. Feed qiime the raw reads
+```         
+qiime tools import \
+  --type SampleData[PairedEndSequencesWithQuality] \
+  --input-path casava_reads \
+  --output-path reads_qza/reads.qza \
+  --input-format CasavaOneEightSingleLanePerSampleDirFmt
+```
+- cassava format, files follow a pattern `SampleID_L001_R1_001.fastq.gz`
+---
+5. remove primer sequences from reads, these are the primers used to enrich for a specific locus, e.g.:16S, COI, etc
+```
+qiime cutadapt trim-paired \
+  --i-demultiplexed-sequences reads_qza/reads.qza \
+  --p-cores 4 \
+  --p-front-f ACGCGHNRAACCTTACC \
+  --p-front-r ACGGGCRGTGWGTRCAA \
+  --p-discard-untrimmed \
+  --p-no-indels \
+  --o-trimmed-sequences reads_qza/reads_trimmed.qza
+```
+6. Visualize your data now
+```         
+qiime demux summarize \
+  --i-data reads_qza/reads_trimmed.qza \
+  --o-visualization reads_qza/reads_trimmed_summary.qzv
+```
+- Add, commit and push `reads_qza/reads_trimmed_summary.qzv` to git
+```
+git add "reads_qza/reads_trimmed_summary.qzv"
+git commit -m "Adding reads summary results"
+git push origin main
+```
+- Download and open `reads_trimmed_summary.qzv` in https://view.qiime2.org/
+---
+
+## **Step 4: Denoising with DADA2**
+# Denoising reads
+1. Ask for some computer resources
+```
+salloc --mem=100G --time=2:00:00 --cpus-per-task=16 
+```
+2. Run DADA2 to denoise and generate ASVs:
+```bash
+qiime dada2 denoise-paired \
+    --i-demultiplexed-seqs reads_qza/reads.qza \
+    --p-trim-left-f 0 --p-trim-left-r 0 \
+    --p-trunc-len-f 250 --p-trunc-len-r 250 \
+      --p-n-threads 32 \
+    --o-table feature-table.qza \
+    --o-representative-sequences rep-seqs.qza \
+    --o-denoising-stats denoising-stats.qza
+```
+2. Summarize the feature table:
+```bash
+qiime feature-table summarize \
+    --i-table feature-table.qza \
+    --o-visualization feature-table.qzv \
+    --m-sample-metadata-file metadata.tsv
+```
+## **Step 5: Taxonomic Assignment**
+1. Assign taxonomy using a pre-trained classifier (e.g., SILVA):
+```bash
+#Download database to compare to
+wget https://data.qiime2.org/2023.9/common/silva-138-99-nb-classifier.qza
+
+qiime feature-classifier classify-sklearn \
+   --i-classifier silva-138-99-nb-classifier.qza \
+   --i-reads rep-seqs.qza \
+   --p-n-jobs 8 \
+   --output-dir taxa
+```
+---
+### Filtering resultant table
+1. Filter out rare ASVs
+```         
+qiime feature-table filter-features \
+  --i-table feature-table.qza \
+  --p-min-frequency 2 \
+  --p-min-samples 1 \
+  --o-filtered-table dada_table_filt.qza
+```
+- replace 2 and 1 with appropiate frequencies and observe the changes.
+2. Filter out contaminant and unclassified ASVs
+```         
+qiime taxa filter-table \
+  --i-table dada_table_filt.qza \
+  --i-taxonomy taxa/classification.qza \
+  --p-include p__ \
+  --p-exclude mitochondria,chloroplast \
+  --o-filtered-table dada_table_filt_contam.qza
+```
+3. Subset and summarize filtered table
+```         
+qiime feature-table summarize \
+  --i-table dada_table_filt_contam.qza \
+  --o-visualization dada_table_filt_contam_summary.qzv
+```
+- Git add, commit and push `dada_table_filt_contam_summary.qzv` Download and open in https://view.qiime2.org/
+
+4. Copy final table to current directory
+```         
+cp dada_table_filt_contam.qza dada_table_final.qza
+```
+5. Produce final table summary
+```         
+qiime feature-table filter-seqs \
+  --i-data rep-seqs.qza \
+  --i-table dada_table_final.qza  \
+  --o-filtered-data rep_seqs_final.qza
+```
+```         
+qiime feature-table summarize \
+  --i-table dada_table_final.qza \
+  --o-visualization dada_table_final_summary.qzv
+```
+
+- Git add, commit and push `dada_table_final_summary.qzv` Download and open in https://view.qiime2.org/
+
+## **Visualization**
+2. Visualize taxonomic composition:
+```bash
+qiime taxa barplot \
+    --i-table feature-table.qza \
+    --i-taxonomy taxa/classification.qza \
+    --m-metadata-file metadata.tsv \
+    --o-visualization taxa-bar-plots.qzv
+```
