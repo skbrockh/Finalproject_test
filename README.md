@@ -118,7 +118,7 @@ done
 ```
 bash rename.sh
 ```
-#### OOPS some sequences are missing
+#### OOPS some sequences are missing (do not do this step if you were not in Jorges office)
 - Download missing sequences.
 ```
 vi tissue_accessions
