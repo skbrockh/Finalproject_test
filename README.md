@@ -87,7 +87,7 @@ while read -r SRR; do
    fastq-dump --gzip $SRR --split-files -O fastq_files/
 done < tissue_accessions.txt
 ```
-
+- We realized the tissue sequences were single not paired, we decided to remove them from the analysis
 2. Let's create the following directory
 ```         
 mkdir reads_qza
