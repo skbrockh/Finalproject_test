@@ -109,7 +109,12 @@ qiime tools import \
 ```
 - cassava format, files follow a pattern `SampleID_L001_R1_001.fastq.gz`
 ---
-5. remove primer sequences from reads, these are the primers used to enrich for a specific locus, e.g.:16S, COI, etc
+5. Compress fastq files
+```
+gzip SRR*
+```
+
+7. remove primer sequences from reads, these are the primers used to enrich for a specific locus, e.g.:16S, COI, etc
 ```
 qiime cutadapt trim-paired \
   --i-demultiplexed-sequences reads_qza/reads.qza \
