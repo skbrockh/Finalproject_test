@@ -14,26 +14,25 @@ QUIIME2 --> to quantify the amount of bacteria present in each sample. This is a
 ---
 ## **Step 1: Downloading the data**
 1. Close the repositroy to get the accession_list.txt file
-'''
+```
 git clone repositorylink
-'''
+```
 2. Create a new directory for the project and move the accession-list.txt file into the directory
-'''
+```
 mkdir -p microbiome_project/fasta
 mv accession_list.txt microbiome_project/
-'''
+```
 3. Go into the new directory and check if the file is there
-
-'''
+```
 cd microbiome_project
 ls
-'''
+```
 4. Now we will need to download the FASTQ files from SRA. To do this we will need to create a file and save the script and run bash.
 
-'''
+```
 vi prep_data.sh
-'''
-'''
+```
+```
 #!/bin/bash
 
 # Create folders & clear any previous versions
@@ -53,9 +52,20 @@ while read line; do
     echo "$accession,$filepath,forward" >> manifest.csv
     echo -e "$accession\t$status" >> metadata.tsv
 done < accession_list.txt
-'''
-
-
+```
+5. Load the SRA tool kit
+```
+module load sra-toolkit/2.10.9
+```
+6. Automate the download of all your raw sequencing data from NCBI using the list of accession numbers. This is result in 2 files: manifest.csv and metadata..tsv
+```
+bash prep_data.sh
+```
+You can now check these files to make sure that they look correct
+```
+head manifest.csv
+cat metadata.tsv
+```
 ---
 ## **Step 2: Data Quality Control**
 
@@ -84,9 +94,9 @@ git push origin main
 vi metadata.tsv
 ```
 - Type `I` to make changes
-- Replace Cancer with Tissue and Breast with Cancer
+- Replace Breast with Cancer
 ```
-sed -i 's/old-text/new-text/g' metadate.tsv
+sed -i 's/Breast/Cancer/g' metadata.tsv
 ```
 
 ## **Step 3: Import Data into QIIME 2**
@@ -143,7 +153,7 @@ mkdir reads_qza
 module load anaconda3        
 conda activate qiime2-amplicon-2024.2
 ```
-- When you are finished with this tutorial make sure you deactivate the environment using `conda deactivate`
+- When you are finished with this step make sure you deactivate the environment using `conda deactivate`
 
 4. Feed qiime the raw reads
 ```         
