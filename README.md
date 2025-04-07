@@ -66,6 +66,10 @@ You can now check these files to make sure that they look correct
 head manifest.csv
 cat metadata.tsv
 ```
+In the metadta file we will need to change some names of samples
+```
+sed -i 's/Breast/Cancer/g' metadata.tsv
+```
 ---
 ## **Step 2: Data Quality Control**
 
@@ -89,16 +93,6 @@ git push origin main
 4. Go to web browser github and download `multiqc_raw_data.html`
 5. Open file in web browser
 ---
-## **Step 3: Generate Metadata File**
-```
-vi metadata.tsv
-```
-- Type `I` to make changes
-- Replace Breast with Cancer
-```
-sed -i 's/Breast/Cancer/g' metadata.tsv
-```
-
 ## **Step 3: Import Data into QIIME 2**
 ### Import the data:
 1. We need to change our raw files names so that they can be read by qiime
