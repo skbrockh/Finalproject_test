@@ -85,7 +85,7 @@ while read -r SRR; do
    echo "Downloading $SRR..."
    prefetch --max-size 100G $SRR 
    fastq-dump --gzip $SRR --split-files -O fastq_files/
-done < srr_accessions.txt
+done < tissue_accessions.txt
 ```
 
 2. Let's create the following directory
