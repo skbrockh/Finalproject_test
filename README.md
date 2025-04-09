@@ -190,7 +190,7 @@ git push origin main
 #### This is importnat to filter out low-quality sequences, chimeras, and artifacts. This allows for more accurate data and downstream analysis reliability.
 1. Ask for some computer resources
 ```
-salloc --mem=100G --time=2:00:00 --cpus-per-task=16 
+salloc --mem=100G --time=6:00:00 --cpus-per-task=32 
 ```
 2. Run DADA2 to denoise and generate ASVs:
 ```bash
